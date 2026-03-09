@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Test Site</title>
+
+  <!-- ============================================================
+    USERCENTRICS CMP
+    Replace YOUR_SETTINGS_ID with your actual Usercentrics Settings ID
+    when you're ready to go live.
+  ============================================================ -->
+  <script id="usercentrics-cmp"
+    src="https://app.usercentrics.eu/browser-ui/latest/loader.js"
+    data-settings-id="YOUR_SETTINGS_ID"
+    async>
+  </script>
+
+  <!-- ============================================================
+    GOOGLE TAG MANAGER — must be loaded AFTER consent is granted.
+    Usercentrics fires a window event when consent is ready.
+    We listen for it and then inject GTM dynamically.
+  ============================================================ -->
+  <script>
+    window.addEventListener('UC_UI_CMP_EVENT', function(e) {
+      // Only inject GTM once user has interacted with the CMP
+      if (
+        e.detail &&
+        (e.detail.type === 'ACCEPT_ALL' || e.detail.type === 'SAVE')
+      ) {
+        injectGTM();
+      }
+    });
+
+    // Also inject GTM if consent was already given in a previous session
+    window.addEventListener('load', function() {
+      if (window.UC_UI && window.UC_UI.areAllConsentsAccepted &&
+          window.UC_UI.areAllConsentsAccepted()) {
+        injectGTM();
+      }
+    });
+
+    var gtmInjected = false;
+    function injectGTM() {
+      if (gtmInjected) return;
+      gtmInjected = true;
+
+      // GTM dataLayer init
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({'gtm.start': new Date().getTime(), event: 'gtm.js'});
+
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtm.js?id=GTM-NZJRRDTX';
+      document.head.appendChild(s);
+    }
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0f0f13;
+      color: #f0f0f0;
+      min-height: 100vh;
+    }
+
+    /* NAV */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.2rem 2.5rem;
+      background: rgba(255,255,255,0.04);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .logo { font-size: 1.3rem; font-weight: 700; letter-spacing: -0.5px; color: #fff; }
+    .logo span { color: #7c6dff; }
+    nav ul { list-style: none; display: flex; gap: 2rem; }
+    nav ul a { color: #aaa; text-decoration: none; font-size: 0.9rem; transition: color .2s; }
+    nav ul a:hover { color: #fff; }
+    .nav-cta {
+      background: #7c6dff;
+      color: #fff !important;
+      padding: 0.5rem 1.2rem;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+
+    /* HERO */
+    .hero {
+      text-align: center;
+      padding: 7rem 1.5rem 5rem;
+      background: radial-gradient(ellipse at 50% 0%, rgba(124,109,255,0.18) 0%, transparent 65%);
+    }
+    .badge {
+      display: inline-block;
+      background: rgba(124,109,255,0.15);
+      border: 1px solid rgba(124,109,255,0.4);
+      color: #a89dff;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 0.35rem 1rem;
+      border-radius: 999px;
+      margin-bottom: 1.5rem;
+    }
+    h1 {
+      font-size: clamp(2.2rem, 5vw, 3.8rem);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -1px;
+      margin-bottom: 1.3rem;
+    }
+    h1 span { color: #7c6dff; }
+    .hero p {
+      max-width: 560px;
+      margin: 0 auto 2.5rem;
+      color: #999;
+      font-size: 1.1rem;
+      line-height: 1.7;
+    }
+    .btn-group { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn-primary {
+      background: #7c6dff;
+      color: #fff;
+      padding: 0.85rem 2rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: background .2s, transform .15s;
+    }
+    .btn-primary:hover { background: #6a5ce0; transform: translateY(-1px); }
+    .btn-secondary {
+      background: transparent;
+      color: #ccc;
+      padding: 0.85rem 2rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      text-decoration: none;
+      border: 1px solid rgba(255,255,255,0.15);
+      cursor: pointer;
+      transition: border-color .2s, color .2s;
+    }
+    .btn-secondary:hover { border-color: #7c6dff; color: #fff; }
+
+    /* FEATURES */
+    .features {
+      padding: 5rem 1.5rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .section-label {
+      text-align: center;
+      color: #7c6dff;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 0.8rem;
+    }
+    .section-title {
+      text-align: center;
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      font-weight: 700;
+      margin-bottom: 3rem;
+    }
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+    }
+    .card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 2rem;
+      transition: border-color .2s, transform .2s;
+    }
+    .card:hover { border-color: rgba(124,109,255,0.4); transform: translateY(-3px); }
+    .card-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+    .card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.6rem; }
+    .card p { color: #888; font-size: 0.9rem; line-height: 1.6; }
+
+    /* CTA BANNER */
+    .cta-banner {
+      margin: 2rem auto 5rem;
+      max-width: 800px;
+      background: linear-gradient(135deg, rgba(124,109,255,0.2), rgba(90,70,220,0.15));
+      border: 1px solid rgba(124,109,255,0.3);
+      border-radius: 18px;
+      padding: 3.5rem 2rem;
+      text-align: center;
+    }
+    .cta-banner h2 { font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 700; margin-bottom: 1rem; }
+    .cta-banner p { color: #999; margin-bottom: 2rem; }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid rgba(255,255,255,0.07);
+      padding: 2rem 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      color: #555;
+      font-size: 0.85rem;
+    }
+    footer a { color: #666; text-decoration: none; }
+    footer a:hover { color: #aaa; }
+  </style>
+</head>
+<body>
+
+  <!-- GTM noscript fallback -->
+  <noscript>
+    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NZJRRDTX"
+      height="0" width="0" style="display:none;visibility:hidden"></iframe>
+  </noscript>
+
+  <!-- NAV -->
+  <nav>
+    <div class="logo">my<span>brand</span></div>
+    <ul>
+      <li><a href="#features">Features</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+      <li><a href="#" class="nav-cta">Get Started</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="badge">🚀 Now in Beta</div>
+    <h1>Build faster.<br/>Ship <span>smarter</span>.</h1>
+    <p>A modern test landing page with Google Tag Manager and Usercentrics CMP fully wired up and ready to go.</p>
+    <div class="btn-group">
+      <a href="#" class="btn-primary">Start for Free</a>
+      <a href="#features" class="btn-secondary">See Features</a>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="features" id="features">
+    <p class="section-label">What's included</p>
+    <h2 class="section-title">Everything you need</h2>
+    <div class="cards">
+      <div class="card">
+        <div class="card-icon">🍪</div>
+        <h3>Usercentrics CMP</h3>
+        <p>GDPR-compliant consent management with a customizable consent banner loaded before any tracking.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📦</div>
+        <h3>Google Tag Manager</h3>
+        <p>GTM (GTM-NZJRRDTX) loads only after the user consents, keeping you compliant and trackable.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">⚡</div>
+        <h3>Fast & Lightweight</h3>
+        <p>Pure HTML/CSS/JS — no frameworks, no bloat. Loads instantly even on slow connections.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🌐</div>
+        <h3>Free DNS Ready</h3>
+        <p>Host on Netlify, GitHub Pages, Vercel, or Cloudflare Pages — all offer free subdomains.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA BANNER -->
+  <div class="cta-banner">
+    <h2>Ready to go live?</h2>
+    <p>Add your Usercentrics Settings ID and deploy to your free hosting provider of choice.</p>
+    <a href="#" class="btn-primary">Deploy Now</a>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <span>© 2026 mybrand. All rights reserved.</span>
+    <span>
+      <a href="#">Privacy Policy</a> &nbsp;·&nbsp;
+      <a href="#">Cookie Settings</a>
+    </span>
+  </footer>
+
+</body>
+</html>
