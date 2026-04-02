@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SST Standard Loader — Demo</title>
+
+  <!-- =====================================================================
+       USERCENTRICS SST — STANDARD LOADER (default /gtm.js path)
+       Defaults: Workspace platform.defnotai.cc / GTM-K54QMXW4
+       Override via URL params: ?workspaceId=xxx&gtmId=GTM-XXX
+       ===================================================================== -->
+  <script>
+    var _p = new URLSearchParams(location.search);
+    var WORKSPACE_ID = _p.get('workspaceId') || 'nu3aey3upr3c5bac'; // #CHANGE
+    var GTM_ID       = _p.get('gtmId')       || 'GTM-W7R73W2S'; // #CHANGE
+    var SST_DOMAIN = _p.get('workspaceId') || 'platform.usercentrics-sst-dev.io'; // #CHANGE
+    (function(w,d,s,l,i){
+      w[l]=w[l]||[];
+      w[l].push({'gtm.start': new Date().getTime(), event: 'gtm.js'});
+      var f=d.getElementsByTagName(s)[0], j=d.createElement(s),
+          dl=l!='dataLayer'?'&l='+l:'';
+      j.async=true;
+      j.src='https://' + SST_DOMAIN + '/gtm.js?id='+i+dl;
+      j.onerror=function(){ window.__loaderError = true; };
+      f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer', GTM_ID);
+  </script> 
+  <!-- End SST Standard Loader -->
+
+  <style> -->
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --border: #2a2d3e;
+      --text: #e2e8f0;
+      --muted: #8892a4;
+      --accent: #10b981;
+      --accent-bg: #0f2a1e;
+      --success: #10b981;
+      --error: #ef4444;
+      --warning: #f59e0b;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.6;
+    }
+
+    .top-bar {
+      background: var(--accent); color: #062014; padding: 10px 24px;
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 0.875rem; font-weight: 600;
+    }
+    .top-bar a { color: rgba(6,32,20,0.65); text-decoration: none; font-weight: 400; font-size: 0.8rem; }
+    .top-bar a:hover { color: #062014; }
+    .mode-pill { background: rgba(0,0,0,0.15); padding: 2px 10px; border-radius: 999px; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; }
+
+    .container { max-width: 900px; margin: 0 auto; padding: 0 24px; }
+
+    .header { padding: 40px 0 32px; }
+    .header h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 8px; }
+    .header h1 span { color: #6ee7b7; }
+    .header p { color: var(--muted); font-size: 0.95rem; }
+
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+    @media (max-width: 640px) { .grid { grid-template-columns: 1fr; } }
+
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+    .card-title { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 16px; }
+
+    .status-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .status-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; background: var(--muted); }
+    .status-dot.checking { background: var(--warning); animation: pulse 1s infinite; }
+    .status-dot.ok       { background: var(--success); }
+    .status-dot.fail     { background: var(--error); }
+    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+    .status-label { font-size: 0.9rem; font-weight: 500; }
+    .status-label.ok   { color: var(--success); }
+    .status-label.fail { color: var(--error); }
+    .status-label.checking { color: var(--warning); }
+    .status-detail { font-size: 0.8rem; color: var(--muted); }
+
+    .path-box { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.75rem; color: #6ee7b7; background: var(--accent-bg); border-radius: 6px; padding: 8px 12px; word-break: break-all; margin-top: 12px; }
+
+    .btn-group { display: flex; flex-direction: column; gap: 8px; }
+    .btn-scroll {
+      max-height: 380px;
+      overflow-y: auto;
+      padding-right: 6px;
+    }
+    .btn-scroll::-webkit-scrollbar { width: 8px; }
+    .btn-scroll::-webkit-scrollbar-track { background: rgba(255,255,255,0.03); border-radius: 8px; }
+    .btn-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 8px; }
+    .group-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-top: 10px;
+    }
+    .group-label:first-child { margin-top: 0; }
+    .btn { padding: 10px 16px; border-radius: 8px; border: none; cursor: pointer; font-size: 0.875rem; font-weight: 500; text-align: left; display: flex; align-items: center; justify-content: space-between; transition: opacity 0.15s; }
+    .btn:hover { opacity: 0.85; }
+    .btn-primary { background: var(--accent); color: #062014; }
+    .btn-secondary { background: rgba(255,255,255,0.06); color: var(--text); border: 1px solid var(--border); }
+    .btn-muted { background: rgba(255,255,255,0.03); color: var(--muted); border: 1px solid var(--border); }
+    .btn .badge { font-size: 0.7rem; background: rgba(0,0,0,0.15); padding: 1px 6px; border-radius: 4px; }
+
+    .feed-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; }
+    .feed-header { padding: 14px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .feed-header span { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+    .feed-count { background: var(--accent); color: #062014; border-radius: 999px; font-size: 0.7rem; font-weight: 700; padding: 1px 7px; min-width: 20px; text-align: center; }
+    .feed-clear { font-size: 0.75rem; color: var(--muted); cursor: pointer; background: none; border: none; padding: 2px 6px; border-radius: 4px; }
+    .feed-clear:hover { color: var(--text); background: rgba(255,255,255,0.06); }
+    #feed-list { max-height: 320px; overflow-y: auto; padding: 8px; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.78rem; }
+    .feed-item { padding: 8px 12px; border-radius: 6px; margin-bottom: 4px; border-left: 3px solid transparent; }
+    .feed-item.gtm-init { border-color: #6ee7b7; background: rgba(16,185,129,0.08); }
+    .feed-item.test-event { border-color: #818cf8; background: rgba(99,102,241,0.08); }
+    .feed-item.page-view { border-color: var(--warning); background: rgba(245,158,11,0.08); }
+    .feed-item.ecommerce { border-color: #60a5fa; background: rgba(96,165,250,0.1); }
+    .feed-item.user-data { border-color: #f472b6; background: rgba(244,114,182,0.1); }
+    .feed-item.other { border-color: var(--border); background: rgba(255,255,255,0.02); }
+    .feed-item.confirmed { border-left-width: 4px; border-color: var(--success); background: rgba(16,185,129,0.14); }
+    .feed-item.confirmed .event-name { color: #6ee7b7; }
+    .feed-item .event-name { color: var(--text); font-weight: 600; }
+    .feed-item .event-time { color: var(--muted); font-size: 0.7rem; float: right; }
+    .feed-item .event-data { color: var(--muted); margin-top: 2px; }
+    .confirmed-badge { display: inline-block; font-size: 0.65rem; font-weight: 700; background: var(--success); color: #052e16; padding: 1px 7px; border-radius: 3px; margin-left: 8px; vertical-align: middle; }
+    .feed-empty { text-align: center; padding: 32px; color: var(--muted); font-size: 0.875rem; font-family: inherit; }
+
+    .info-box { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.25); border-radius: 8px; padding: 14px 16px; font-size: 0.85rem; color: var(--muted); margin-bottom: 20px; }
+    .info-box strong { color: var(--text); }
+
+    .instructions { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+    .instructions h3 { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 14px; }
+    .step { display: flex; gap: 12px; margin-bottom: 10px; font-size: 0.875rem; color: var(--muted); align-items: flex-start; }
+    .step-num { width: 22px; height: 22px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; flex-shrink: 0; color: #062014; }
+    .step strong { color: var(--text); }
+
+    footer { border-top: 1px solid var(--border); padding: 20px 0; text-align: center; color: var(--muted); font-size: 0.78rem; margin-top: 48px; }
+  </style>
+</head>
+<body>
+
+
+<!-- Google Tag Manager (noscript) #CHANGE -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-K54QMXW4"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+<div class="top-bar">
+  <span>🏷 SST Standard Loader — Demo Page <span class="mode-pill">SST · /gtm.js</span></span>
+  <a href="index.html">← Back to overview</a>
+</div>
+
+<div class="container">
+  <div class="header">
+    <h1>Usercentrics SST — <span>Standard Loader</span></h1>
+    <p>This page loads GTM via the standard <code>/gtm.js</code> path. This is the <strong>baseline</strong> — it does NOT use the resilient loader, so it can be blocked by ad blockers.</p>
+  </div>
+
+  <div class="info-box">
+    <strong>⚠ This is the baseline (no resilience):</strong> This loader uses the standard <code>/gtm.js</code> path, which is a well-known pattern. Ad blockers that target GTM loading patterns <em>may</em> block this. If this page shows "Blocked" while SST Resilient Loader still loads, the feature is working as expected.
+  </div>
+
+  <div class="grid">
+
+    <div class="card">
+      <div class="card-title">Loader Status</div>
+      <div class="status-row">
+        <div class="status-dot checking" id="status-dot"></div>
+        <div>
+          <div class="status-label checking" id="status-label">Checking…</div>
+          <div class="status-detail" id="status-detail">Waiting for GTM to initialize</div>
+        </div>
+      </div>
+      <div class="path-box" id="loader-path"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Fire Events</div>
+      <div class="btn-group btn-scroll">
+        <div class="group-label">General</div>
+        <button class="btn btn-primary" onclick="fireTestEvent()">
+          Fire Test Event <span class="badge">test_event</span>
+        </button>
+
+        <div class="group-label">Browsing</div>
+        <button class="btn btn-secondary" onclick="view_item()">
+          View Item <span class="badge">view_item</span>
+        </button>
+        <button class="btn btn-secondary" onclick="view_item_list()">
+          View Item List <span class="badge">view_item_list</span>
+        </button>
+        <button class="btn btn-secondary" onclick="select_item()">
+          Select Item <span class="badge">select_item</span>
+        </button>
+
+        <div class="group-label">Cart</div>
+        <button class="btn btn-secondary" onclick="add_to_cart()">
+          Add To Cart <span class="badge">add_to_cart</span>
+        </button>
+        <button class="btn btn-secondary" onclick="remove_from_cart()">
+          Remove From Cart <span class="badge">remove_from_cart</span>
+        </button>
+        <button class="btn btn-secondary" onclick="view_cart()">
+          View Cart <span class="badge">view_cart</span>
+        </button>
+
+        <div class="group-label">Checkout</div>
+        <button class="btn btn-secondary" onclick="begin_checkout()">
+          Begin Checkout <span class="badge">begin_checkout</span>
+        </button>
+        <button class="btn btn-secondary" onclick="add_shipping_info()">
+          Add Shipping Info <span class="badge">add_shipping_info</span>
+        </button>
+        <button class="btn btn-secondary" onclick="add_payment_info()">
+          Add Payment Info <span class="badge">add_payment_info</span>
+        </button>
+
+        <div class="group-label">Transaction</div>
+        <button class="btn btn-secondary" onclick="purchase()">
+          Purchase <span class="badge">purchase</span>
+        </button>
+        <button class="btn btn-secondary" onclick="refund()">
+          Refund <span class="badge">refund</span>
+        </button>
+
+        <div class="group-label">Engagement</div>
+        <button class="btn btn-secondary" onclick="add_to_wishlist()">
+          Add To Wishlist <span class="badge">add_to_wishlist</span>
+        </button>
+        <button class="btn btn-secondary" onclick="view_promotion()">
+          View Promotion <span class="badge">view_promotion</span>
+        </button>
+        <button class="btn btn-secondary" onclick="select_promotion()">
+          Select Promotion <span class="badge">select_promotion</span>
+        </button>
+
+        <div class="group-label">User Data</div>
+        <button class="btn btn-muted" onclick="push_user_data()">
+          Push User Data <span class="badge">user_data</span>
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="feed-card" style="margin-bottom: 20px;">
+    <div class="feed-header">
+      <span>DataLayer Feed</span>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span class="feed-count" id="feed-count">0</span>
+        <button class="feed-clear" onclick="clearFeed()">Clear</button>
+      </div>
+    </div>
+    <div id="feed-list">
+      <div class="feed-empty">No events yet. Fire an event above or wait for GTM to push the initial events.</div>
+    </div>
+  </div>
+
+  <div class="instructions">
+    <h3>How to verify this page</h3>
+    <div class="step">
+      <div class="step-num">1</div>
+      <div><strong>Without ad blocker</strong> — the loader status should be green "Loaded ✓". Fire a test event to confirm GTM is working normally.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div><strong>Enable an ad blocker</strong> — turn on uBlock Origin or AdBlock Plus, then reload this page. The standard <code>/gtm.js</code> path may get blocked.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div><strong>Observe the difference</strong> — if the status shows "Blocked ✗" or "Not detected ✗" here, then open <a href="demo-sst.html" style="color:#6ee7b7">SST Resilient Loader</a> — it should still be green. That's the feature working.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div><strong>Note:</strong> the SST domain itself (<code>sst.dev.usercentrics.io</code>) may not be in all block lists yet, so this page might still load even with some ad blockers — that's expected. The key test is with a strict blocker set to block all GTM patterns.</div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="container">
+    SST Standard Loader · Workspace: <span id="footer-ws">platform.defnotai.cc</span> · GTM: <span id="footer-gtm">GTM-K54QMXW4</span> · Path: /gtm.js
+  </div>
+</footer>
+
+<script>
+  window.dataLayer = window.dataLayer || [];
+  var seen = 0;
+  var feedEl = document.getElementById('feed-list');
+  var countEl = document.getElementById('feed-count');
+
+  function formatTime() {
+    var d = new Date();
+    return d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0') + ':' + d.getSeconds().toString().padStart(2,'0') + '.' + d.getMilliseconds().toString().padStart(3,'0');
+  }
+
+  function classify(ev) {
+    var name = (ev.event || '');
+    if (name === 'gtm_tag_confirmed') return 'confirmed';
+    if (name.startsWith('gtm.')) return 'gtm-init';
+    if (name === 'test_event') return 'test-event';
+    if (name === 'user_data') return 'user-data';
+    if ([
+      'view_item', 'view_item_list', 'select_item',
+      'add_to_cart', 'remove_from_cart', 'view_cart',
+      'begin_checkout', 'add_shipping_info', 'add_payment_info',
+      'purchase', 'refund', 'add_to_wishlist',
+      'view_promotion', 'select_promotion'
+    ].includes(name)) return 'ecommerce';
+    if (name === 'page_view') return 'page-view';
+    return 'other';
+  }
+
+  function renderEvent(ev) {
+    var name = ev.event || Object.keys(ev)[0] || 'unknown';
+    var cls = classify(ev);
+    var data = JSON.stringify(ev, null, 0).replace(/"/g, '').replace(/,/g, ', ').slice(0,120);
+    var badge = cls === 'confirmed' ? '<span class="confirmed-badge">↩ GTM processed</span>' : '';
+    var item = document.createElement('div');
+    item.className = 'feed-item ' + cls;
+    item.innerHTML = '<span class="event-time">' + formatTime() + '</span><div class="event-name">' + name + badge + '</div><div class="event-data">' + data + '</div>';
+    return item;
+  }
+
+  function pollDataLayer() {
+    if (window.dataLayer.length > seen) {
+      if (seen === 0) feedEl.innerHTML = '';
+      for (var i = seen; i < window.dataLayer.length; i++) feedEl.appendChild(renderEvent(window.dataLayer[i]));
+      seen = window.dataLayer.length;
+      countEl.textContent = seen;
+      feedEl.scrollTop = feedEl.scrollHeight;
+    }
+  }
+
+  setInterval(pollDataLayer, 300);
+
+  function checkGTM() {
+    var dot = document.getElementById('status-dot');
+    var lbl = document.getElementById('status-label');
+    var det = document.getElementById('status-detail');
+    if (window.__loaderError) {
+      dot.className = 'status-dot fail'; lbl.className = 'status-label fail';
+      lbl.textContent = 'Blocked ✗'; det.textContent = 'Loader script failed to load (network error or ad blocker)';
+      return;
+    }
+    if (window.google_tag_manager && window.google_tag_manager[GTM_ID]) {
+      dot.className = 'status-dot ok'; lbl.className = 'status-label ok';
+      lbl.textContent = 'Loaded ✓'; det.textContent = 'GTM container ' + GTM_ID + ' is active';
+    } else {
+      setTimeout(checkGTM, 500);
+    }
+  }
+
+  setTimeout(function() {
+    var dot = document.getElementById('status-dot');
+    var lbl = document.getElementById('status-label');
+    var det = document.getElementById('status-detail');
+    if (dot.className.includes('checking')) {
+      dot.className = 'status-dot fail'; lbl.className = 'status-label fail';
+      lbl.textContent = 'Not detected ✗'; det.textContent = 'GTM did not initialize within 5 seconds — likely blocked';
+    }
+  }, 5000);
+
+  checkGTM();
+
+  function fireEvent(name, props) {
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push(Object.assign({ event: name }, props));
+  }
+
+  function generateTransactionId() {
+    var timestamp = Date.now().toString(36);
+    var randomString = Math.random().toString(36).substring(2, 10).toUpperCase();
+    return 'myTR-' + timestamp + '-' + randomString;
+  }
+
+  function fireTestEvent() {
+    fireEvent('test_event', { category: 'demo', label: 'test_button' });
+  }
+
+  function view_item() {
+    dataLayer.push({ ecommerce: null });
+    dataLayer.push({
+      event: 'view_item',
+      ecommerce: {
+        items: [{
+          item_id: '12345',
+          item_name: 'Running Shoes',
+          item_category: 'Footwear',
+          price: 74.99,
+          currency: 'USD'
+        }]
+      },
+      currency: 'USD'
+    });
+  }
+
+  function view_item_list() {
+    dataLayer.push({ ecommerce: null });
+    dataLayer.push({
+      event: 'view_item_list',
+      ecommerce: {
+        items: [
+          { item_id: '12345', item_name: 'Running Shoes', price: 79.99, currency: 'USD' },
+          { item_id: '67890', item_name: 'Basketball Sneakers', price: 99.99, currency: 'USD' }
+        ]
+      }
+    });
+  }
+
+  function select_item() {
+    dataLayer.push({ ecommerce: null });
+    dataLayer.push({
+      event: 'select_item',
+      ecommerce: {
+        items: [{ item_id: '12345', item_name: 'Running Shoes', item_category: 'Footwear' }]
+      }
+    });
+  }
+
+  function add_to_cart() {
+    dataLayer.push({ ecommerce: null });
+    dataLayer.push({
+      event: 'add_to_cart',
+      ecommerce: {
+        items: [{ item_id: '12345', item_name: 'Running Shoes', price: 79.99, quantity: 1, currency: 'USD' }]
+      }
+    });
+  }
+
+  function remove_from_cart() {
+    dataLayer.push({ ecommerce: null });
+    dataLayer.push({
+      event: 'remove_from_cart',
+      ecommerce: {
+        items: [{ item_id: '12345', item_name: 'Running Shoes', price: 79.99, quantity: 1, currency: 'USD' }]
+      }
+    });
+  }
+
+  function view_cart() {
+    dataLayer.push({ ecommerce: null });
+    dataLayer.push({
+      event: 'view_cart',
+      ecommerce: {
+        items: [{ item_id: '12345', item_name: 'Running Shoes', price: 79.99, quantity: 1, currency: 'USD' }]
+      }
+    });
+  }
+
+  function begin_checkout() {
+    dataLayer.push({ ecommerce: null });
+    dataLayer.push({
+      event: 'begin_checkout',
+      ecommerce: {
+        value: 79.99,
+        currency: 'USD',
+        items: [{ item_id: '12345', item_name: 'Running Shoes', price: 79.99, quantity: 1 }]
+      }
+    });
+  }
+
+  function add_shipping_info() {
+    dataLayer.push({ ecommerce: null });
+    dataLayer.push({
+      event: 'add_shipping_info',
+      ecommerce: { shipping_tier: 'Standard Shipping', currency: 'USD' }
+    });
+  }
+
+  function add_payment_info() {
+    dataLayer.push({ ecommerce: null });
+    dataLayer.push({
+      event: 'add_payment_info',
+      ecommerce: { payment_type: 'Credit Card', currency: 'USD' }
+    });
+  }
+
+  function purchase() {
+    dataLayer.push({ ecommerce: null });
+    dataLayer.push({
+      event: 'purchase',
+      ecommerce: {
+        transaction_id: generateTransactionId(),
+        value: 79.99,
+        currency: 'USD',
+        items: [{ item_id: '12345', item_name: 'Running Shoes', price: 79.99, quantity: 1 }]
+      },
+      user_data: {
+        email: 'john.doe@usercentrics.com',
+        address: {
+          first_name: 'John',
+          last_name: 'Doe',
+          city: 'Munich',
+          region: 'BAY',
+          country: 'Germany',
+          postal_code: '80331'
+        },
+        phone_number: '+49 151 40514555'
+      }
+    });
+  }
+
+  function refund() {
+    dataLayer.push({ ecommerce: null });
+    dataLayer.push({
+      event: 'refund',
+      ecommerce: { transaction_id: generateTransactionId(), value: 79.99, currency: 'USD' }
+    });
+  }
+
+  function add_to_wishlist() {
+    dataLayer.push({ ecommerce: null });
+    dataLayer.push({
+      event: 'add_to_wishlist',
+      ecommerce: {
+        items: [{ item_id: '12345', item_name: 'Running Shoes', item_category: 'Footwear', price: 79.99, currency: 'USD' }]
+      }
+    });
+  }
+
+  function view_promotion() {
+    dataLayer.push({ ecommerce: null });
+    dataLayer.push({
+      event: 'view_promotion',
+      ecommerce: {
+        promotions: [{ promotion_id: 'PROMO1', promotion_name: 'Spring Sale', creative_name: 'Banner Ad', creative_slot: 'Homepage Top' }]
+      }
+    });
+  }
+
+  function select_promotion() {
+    dataLayer.push({ ecommerce: null });
+    dataLayer.push({
+      event: 'select_promotion',
+      ecommerce: {
+        promotions: [{ promotion_id: 'PROMO1', promotion_name: 'Spring Sale', creative_name: 'Banner Ad', creative_slot: 'Homepage Top' }]
+      }
+    });
+  }
+
+  function push_user_data() {
+    dataLayer.push({
+      event: 'user_data',
+      user_data: {
+        email: 'john.doe@usercentrics.com',
+        address: {
+          first_name: 'John',
+          last_name: 'Doe',
+          city: 'Munich',
+          region: 'BAY',
+          country: 'Germany',
+          postal_code: '80331'
+        },
+        phone_number: '+49 151 40514555'
+      }
+    });
+  }
+
+  function clearFeed() {
+    feedEl.innerHTML = '<div class="feed-empty">Cleared. Fire an event or reload to see new entries.</div>';
+    seen = 0; countEl.textContent = 0;
+  }
+
+  var SST_DOMAIN = 'platform.defnotai.cc';
+  // ── Set dynamic values once DOM is ready ───────────────────────────────────
+  document.getElementById('loader-path').textContent =
+    'https://' + SST_DOMAIN + '/gtm.js?id=' + GTM_ID;
+  document.getElementById('footer-ws').textContent  = SST_DOMAIN;
+  document.getElementById('footer-gtm').textContent = GTM_ID;
+</script>
+
+</body>
+</html>
