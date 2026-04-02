@@ -14,7 +14,7 @@
     var _p = new URLSearchParams(location.search);
     var WORKSPACE_ID = _p.get('workspaceId') || 'nu3aey3upr3c5bac'; // #CHANGE
     var GTM_ID       = _p.get('gtmId')       || 'GTM-W7R73W2S'; // #CHANGE
-    var SST_DOMAIN = _p.get('workspaceId') || 'platform.usercentrics-sst-dev.io'; // #CHANGE
+    var SST_DOMAIN = _p.get('workspaceId') || 'nu3aey3upr3c5bac.sst.dev.usercentrics.io'; // #CHANGE
     (function(w,d,s,l,i){
       w[l]=w[l]||[];
       w[l].push({'gtm.start': new Date().getTime(), event: 'gtm.js'});
@@ -571,7 +571,7 @@
     seen = 0; countEl.textContent = 0;
   }
 
-  var SST_DOMAIN = 'platform.defnotai.cc';
+  var SST_DOMAIN = 'nu3aey3upr3c5bac.sst.dev.usercentrics.io';
   // ── Set dynamic values once DOM is ready ───────────────────────────────────
   document.getElementById('loader-path').textContent =
     'https://' + SST_DOMAIN + '/gtm.js?id=' + GTM_ID;
