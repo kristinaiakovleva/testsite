@@ -186,6 +186,29 @@ function push_user_data() {
                }
            });
 }
+
+  // 2. Also send to GTM server with preview header
+  fetch('https://www.google-analytics.com/g/collect', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Gtm-Server-Preview': 'ZW52LTZ8bU9yUDF2RXF3YTc2QmU1V2cxTGdsQXwxOWRiYWI0YzU3NTA1Y2ZjZWRhMjA='
+    },
+    body: JSON.stringify({
+      event: "view_item",
+                ecommerce: {
+                    items: [{
+                        item_id: "12345",
+                        item_name: "Running Shoes",
+                        item_category: "Footwear",
+                        price: 74.99,
+                        currency: "USD"
+                    }]
+                }
+                , currency: "USD"
+            })
+  });
+}
 </script>
 
 
