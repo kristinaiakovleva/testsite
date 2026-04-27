@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GTM 1 servercontainer default script</title>
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://nu3aey3upr3c5bac.sst.dev.usercentrics.io/u2/nu3aey3upr3c5bac?gtmId=GTM-W7R73W2S'+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer');</script>
+<!-- End Google Tag Manager -->
+<script>
+
+function generateTransactionId() {
+    const timestamp = Date.now().toString(36);
+    const randomString = Math.random().toString(36).substring(2, 10).toUpperCase(); // Generate random string
+    return `myTR-${timestamp}-${randomString}`;
+}
+
+
+function view_item() {dataLayer.push({ ecommerce: null });
+            dataLayer.push({
+                event: "view_item",
+                ecommerce: {
+                    items: [{
+                        item_id: "12345",
+                        item_name: "Running Shoes",
+                        item_category: "Footwear",
+                        price: 74.99,
+                        currency: "USD"
+                    }]
+                }
+                , currency: "USD"
+            });
+        }
+
+        function view_item_list() {dataLayer.push({ ecommerce: null });
+            dataLayer.push({
+                event: "view_item_list",
+                ecommerce: {
+                    items: [
+                        { item_id: "12345", item_name: "Running Shoes", price: 79.99, currency: "USD" },
+                        { item_id: "67890", item_name: "Basketball Sneakers", price: 99.99, currency: "USD" }
+                    ]
+                }
+            });
+        }
+
+        function select_item() {dataLayer.push({ ecommerce: null });
+            dataLayer.push({
+                event: "select_item",
+                ecommerce: {
+                    items: [{ item_id: "12345", item_name: "Running Shoes", item_category: "Footwear" }]
+                }
+            });
+        }
+
+        function add_to_cart() {dataLayer.push({ ecommerce: null });
+            dataLayer.push({
+                event: "add_to_cart",
+                ecommerce: {
+                    items: [{ item_id: "12345", item_name: "Running Shoes", price: 79.99, quantity: 1, currency: "USD" }]
+                }
+            });
+        }
+
+        function remove_from_cart() {dataLayer.push({ ecommerce: null });
+            dataLayer.push({
+                event: "remove_from_cart",
+                ecommerce: {
+                    items: [{ item_id: "12345", item_name: "Running Shoes", price: 79.99, quantity: 1, currency: "USD" }]
+                }
+            });
+        }
+
+        function view_cart() {dataLayer.push({ ecommerce: null });
+            dataLayer.push({
+                event: "view_cart",
+                ecommerce: {
+                    items: [{ item_id: "12345", item_name: "Running Shoes", price: 79.99, quantity: 1, currency: "USD" }]
+                }
+            });
+        }
+
+        function begin_checkout() {dataLayer.push({ ecommerce: null });
+            dataLayer.push({
+                event: "begin_checkout",
+                ecommerce: {
+                    value: 79.99,
+                    currency: "USD",
+                    items: [{ item_id: "12345", item_name: "Running Shoes", price: 79.99, quantity: 1 }]
+                }
+            });
+        }
+
+        function add_shipping_info() {dataLayer.push({ ecommerce: null });
+            dataLayer.push({
+                event: "add_shipping_info",
+                ecommerce: { shipping_tier: "Standard Shipping", currency: "USD" }
+            });
+        }
+
+        function add_payment_info() {dataLayer.push({ ecommerce: null });
+            dataLayer.push({
+                event: "add_payment_info",
+                ecommerce: { payment_type: "Credit Card", currency: "USD" }
+            });
+        }
+
+        function purchase() {dataLayer.push({ ecommerce: null });
+            dataLayer.push({
+                event: "purchase",
+                ecommerce: {
+                    transaction_id: generateTransactionId(),
+                    value: 79.99,
+                    currency: "USD",
+                    items: [{ item_id: "12345", item_name: "Running Shoes", price: 79.99, quantity: 1 }]
+                },
+                user_data: {
+                  email: 'john.doe@usercentrics.com',
+                  address: {
+                    first_name: "John",
+                    last_name: "Doe",
+                    city: "Munich",
+                    region: "BAY",
+                    country: "Germany",
+                    postal_code: "80331"
+                  },
+                  phone_number: "+49 151 40514555"
+                }
+            });
+        }
+
+        function refund() {dataLayer.push({ ecommerce: null });
+            dataLayer.push({
+                event: "refund",
+                ecommerce: { transaction_id: generateTransactionId(), value: 79.99, currency: "USD" }
+            });
+        }
+
+        function add_to_wishlist() {dataLayer.push({ ecommerce: null });
+            dataLayer.push({
+                event: "add_to_wishlist",
+                ecommerce: {
+                    items: [{ item_id: "12345", item_name: "Running Shoes", item_category: "Footwear", price: 79.99, currency: "USD" }]
+                }
+            });
+        }
+
+        function view_promotion() {dataLayer.push({ ecommerce: null });
+            dataLayer.push({
+                event: "view_promotion",
+                ecommerce: {
+                    promotions: [{ promotion_id: "PROMO1", promotion_name: "Spring Sale", creative_name: "Banner Ad", creative_slot: "Homepage Top" }]
+                }
+            });
+        }
+
+        function select_promotion() {dataLayer.push({ ecommerce: null });
+            dataLayer.push({
+                event: "select_promotion",
+                ecommerce: {
+                    promotions: [{ promotion_id: "PROMO1", promotion_name: "Spring Sale", creative_name: "Banner Ad", creative_slot: "Homepage Top" }]
+                }
+            });
+        }
+
+
+function push_user_data() {
+        dataLayer.push({
+               event: "user_data",
+               user_data: {
+                 email: 'john.doe@usercentrics.com',
+                 address: {
+                   first_name: "John",
+                   last_name: "Doe",
+                   city: "Munich",
+                   region: "BAY",
+                   country: "Germany",
+                   postal_code: "80331"
+                 },
+                 phone_number: "+49 151 40514555"
+               }
+           });
+}
+</script>
+
+
+</head>
+<body>
+    <h1>Welcome to the test Page</h1>
+    <p>This page has a height greater than 2000 pixels.</p>
+
+    <div>
+        <!-- Creating empty space to increase the height -->
+        <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla convallis pulvinar vestibulum. <br>
+            Mauris nec velit euismod, bibendum velit non, tristique mi. Pellentesque habitant morbi tristique <br>
+            senectus et netus et malesuada fames ac turpis egestas. Integer convallis massa at augue consequat <br>
+            volutpat. Mauris luctus sapien non orci dapibus, nec vehicula felis congue. In hac habitasse platea dictumst.
+        </p>
+
+        <table border="1" cellspacing="0" cellpadding="10">
+                <tr>
+                    <td><button onclick="view_item()">view_item</button></td>
+                    <td><button onclick="view_item_list()">view_item_list</button></td>
+                    <td><button onclick="select_item()">select_item</button></td>
+                </tr>
+                <tr>
+                    <td><button onclick="add_to_cart()">add_to_cart</button></td>
+                    <td><button onclick="remove_from_cart()">remove_from_cart</button></td>
+                    <td><button onclick="view_cart()">view_cart</button></td>
+                </tr>
+                <tr>
+                    <td><button onclick="begin_checkout()">begin_checkout</button></td>
+                    <td><button onclick="add_shipping_info()">add_shipping_info</button></td>
+                    <td><button onclick="add_payment_info()">add_payment_info</button></td>
+                </tr>
+                <tr>
+                    <td><button onclick="purchase()">purchase</button></td>
+                    <td><button onclick="refund()">refund</button></td>
+                    <td><button onclick="add_to_wishlist()">add_to_wishlist</button></td>
+                </tr>
+                <tr>
+                    <td><button onclick="view_promotion()">view_promotion</button></td>
+                    <td><button onclick="select_promotion()">select_promotion</button></td>
+                    <td><button onclick="push_user_data()">push_user_data</button></td>
+                </tr>
+            </table>
+
+
+
+        <!-- Repeating content to extend height manually -->
+        <p>More content to make the page taller... 1</p>
+        <p>More content to make the page taller... 2</p>
+        <p>More content to make the page taller... 3</p>
+        <p>More content to make the page taller... 4</p>
+        <p>More content to make the page taller... 5</p>
+        <p>More content to make the page taller... 6</p>
+        <p>More content to make the page taller... 7</p>
+        <p>More content to make the page taller... 8</p>
+        <p>More content to make the page taller... 9</p>
+        <p>More content to make the page taller... 10</p>
+        <p>More content to make the page taller... 11</p>
+        <p>More content to make the page taller... 12</p>
+        <p>More content to make the page taller... 13</p>
+        <p>More content to make the page taller... 14</p>
+        <p>More content to make the page taller... 15</p>
+        <p>More content to make the page taller... 16</p>
+        <p>More content to make the page taller... 17</p>
+        <p>More content to make the page taller... 18</p>
+        <p>More content to make the page taller... 19</p>
+        <p>More content to make the page taller... 20</p>
+        <p>More content to make the page taller... 21</p>
+        <p>More content to make the page taller... 22</p>
+        <p>More content to make the page taller... 23</p>
+        <p>More content to make the page taller... 24</p>
+        <p>More content to make the page taller... 25</p>
+        <p>More content to make the page taller... 26</p>
+        <p>More content to make the page taller... 27</p>
+        <p>More content to make the page taller... 28</p>
+        <p>More content to make the page taller... 29</p>
+        <p>More content to make the page taller... 30</p>
+        <p>More content to make the page taller... 31</p>
+        <p>More content to make the page taller... 32</p>
+        <p>More content to make the page taller... 33</p>
+        <p>More content to make the page taller... 34</p>
+        <p>More content to make the page taller... 35</p>
+        <p>More content to make the page taller... 36</p>
+        <p>More content to make the page taller... 37</p>
+        <p>More content to make the page taller... 38</p>
+        <p>More content to make the page taller... 39</p>
+        <p>More content to make the page taller... 40</p>
+        <p>More content to make the page taller... 41</p>
+        <p>More content to make the page taller... 42</p>
+        <p>More content to make the page taller... 43</p>
+        <p>More content to make the page taller... 44</p>
+        <p>More content to make the page taller... 45</p>
+        <p>More content to make the page taller... 46</p>
+        <p>More content to make the page taller... 47</p>
+        <p>More content to make the page taller... 48</p>
+        <p>More content to make the page taller... 49</p>
+        <p>More content to make the page taller... 50</p>
+    </div>
+
+    <p>End of the page.</p>
+</body>
+</html>
