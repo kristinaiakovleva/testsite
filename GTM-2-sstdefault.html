@@ -3,6 +3,16 @@
 <head>
     <title>GTM 1 servercontainer default script</title>
 
+      <!-- Usercentrics FIRST - before anything else -->
+  <script>
+    var script = document.createElement('script');
+    script.id = 'usercentrics-cmp';
+    script.src = 'https://app.usercentrics.eu/browser-ui/latest/loader.js';
+    script.setAttribute('data-settings-id', 'AidMSkWGYJN1H7');
+    script.async = true;
+    document.head.appendChild(script);
+  </script>
+
 <!-- Google Tag Manager -->
 <script>(function(w,d,s,l){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
