@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SST-1008 · UC Conversions Client — Debug</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0f1117;
+      color: #e2e8f0;
+      min-height: 100vh;
+    }
+
+    header {
+      background: #1a1d27;
+      border-bottom: 1px solid #2d3148;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    header h1 { font-size: 16px; font-weight: 600; color: #a78bfa; }
+    header span { font-size: 12px; color: #6b7280; }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      height: calc(100vh - 57px);
+    }
+
+    /* ── LEFT PANEL ── */
+    .sidebar {
+      background: #13151f;
+      border-right: 1px solid #2d3148;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .server-config {
+      padding: 16px;
+      border-bottom: 1px solid #2d3148;
+    }
+    .server-config label { font-size: 11px; color: #9ca3af; text-transform: uppercase; letter-spacing: .05em; display: block; margin-bottom: 6px; }
+    .server-config input {
+      width: 100%;
+      background: #1e2130;
+      border: 1px solid #3d4266;
+      border-radius: 6px;
+      color: #e2e8f0;
+      font-size: 13px;
+      padding: 8px 10px;
+      outline: none;
+    }
+    .server-config input:focus { border-color: #6366f1; }
+
+    .section-header {
+      padding: 10px 16px 6px;
+      font-size: 10px;
+      font-weight: 700;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+    .test-btn {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      width: 100%;
+      background: none;
+      border: none;
+      border-bottom: 1px solid #1e2130;
+      padding: 10px 16px;
+      cursor: pointer;
+      text-align: left;
+      color: #e2e8f0;
+      transition: background .15s;
+    }
+    .test-btn:hover { background: #1e2130; }
+    .test-btn.active { background: #1c1f35; border-left: 3px solid #6366f1; }
+
+    .badge {
+      flex-shrink: 0;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-top: 1px;
+    }
+    .badge-tc   { background: #1e3a5f; color: #60a5fa; }
+    .badge-reg  { background: #2d1f4e; color: #a78bfa; }
+
+    .btn-text { font-size: 12px; line-height: 1.4; color: #cbd5e1; }
+    .btn-key  { font-size: 10px; color: #6b7280; margin-top: 2px; }
+
+    /* ── RIGHT PANEL ── */
+    .main {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .request-area {
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid #2d3148;
+      background: #13151f;
+    }
+
+    .request-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #a78bfa;
+      margin-bottom: 12px;
+    }
+
+    .request-line {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .method-badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      background: #1a3a5f;
+      color: #38bdf8;
+      flex-shrink: 0;
+    }
+    .method-badge.GET { background: #1a4a2f; color: #4ade80; }
+
+    #req-url-display {
+      font-family: monospace;
+      font-size: 13px;
+      color: #fbbf24;
+      word-break: break-all;
+    }
+
+    .headers-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .panel-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: #6b7280;
+      margin-bottom: 6px;
+    }
+
+    pre.code-box {
+      font-family: monospace;
+      font-size: 12px;
+      background: #0d0f1a;
+      border: 1px solid #2d3148;
+      border-radius: 6px;
+      padding: 10px 12px;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+      color: #a5f3fc;
+      min-height: 60px;
+      max-height: 160px;
+      overflow-y: auto;
+    }
+
+    .send-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    #send-btn {
+      background: #4f46e5;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 9px 22px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .15s;
+    }
+    #send-btn:hover { background: #6366f1; }
+    #send-btn:disabled { background: #2d3148; color: #6b7280; cursor: not-allowed; }
+
+    #curl-copy {
+      background: none;
+      border: 1px solid #3d4266;
+      color: #9ca3af;
+      border-radius: 6px;
+      padding: 9px 16px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    #curl-copy:hover { border-color: #6366f1; color: #e2e8f0; }
+
+    #status-badge {
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 4px;
+      display: none;
+    }
+    .status-ok  { background: #14532d; color: #4ade80; display: inline-block !important; }
+    .status-err { background: #7f1d1d; color: #f87171; display: inline-block !important; }
+    .status-net { background: #713f12; color: #fbbf24; display: inline-block !important; }
+
+    /* ── RESPONSE ── */
+    .response-area {
+      flex: 1;
+      padding: 16px 24px 20px;
+      overflow-y: auto;
+      background: #0f1117;
+    }
+
+    .response-header-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .resp-label { font-size: 11px; color: #6b7280; text-transform: uppercase; letter-spacing: .06em; }
+
+    #resp-time { font-size: 11px; color: #6b7280; }
+
+    pre#response-box {
+      font-family: monospace;
+      font-size: 12px;
+      background: #0d0f1a;
+      border: 1px solid #2d3148;
+      border-radius: 8px;
+      padding: 16px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      color: #d1fae5;
+      min-height: 120px;
+      line-height: 1.6;
+    }
+
+    #resp-headers-box {
+      font-family: monospace;
+      font-size: 11px;
+      background: #0d0f1a;
+      border: 1px solid #2d3148;
+      border-radius: 6px;
+      padding: 10px 12px;
+      white-space: pre-wrap;
+      color: #94a3b8;
+      margin-bottom: 10px;
+      max-height: 100px;
+      overflow-y: auto;
+    }
+
+    .placeholder { color: #4b5563; font-style: italic; }
+
+    /* body editor */
+    .editable-area {
+      position: relative;
+    }
+    textarea.body-edit {
+      width: 100%;
+      font-family: monospace;
+      font-size: 12px;
+      background: #0d0f1a;
+      border: 1px solid #2d3148;
+      border-radius: 6px;
+      padding: 10px 12px;
+      color: #a5f3fc;
+      resize: vertical;
+      min-height: 80px;
+      max-height: 160px;
+      outline: none;
+    }
+    textarea.body-edit:focus { border-color: #6366f1; }
+
+    /* curl box */
+    #curl-box {
+      display: none;
+      margin-top: 10px;
+    }
+    #curl-box pre {
+      font-family: monospace;
+      font-size: 11px;
+      background: #0d0f1a;
+      border: 1px solid #2d3148;
+      border-radius: 6px;
+      padding: 10px 12px;
+      color: #fde68a;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>SST-1008 · UC Conversions Client</h1>
+  <span>sGTM Debug Page — send requests and inspect responses</span>
+</header>
+
+<div class="layout">
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar">
+    <div class="server-config">
+      <label>sGTM Container Base URL</label>
+      <input id="base-url" type="text" value="https://your-sgtm-container.example.com" placeholder="https://your-sgtm-container.example.com" />
+    </div>
+
+    <div class="section-header">Core Path Claiming</div>
+
+    <button class="test-btn active" onclick="select(this, 'tc002')">
+      <span class="badge badge-tc">TC-002</span>
+      <div><div class="btn-text">Client claims matching path</div><div class="btn-key">POST /webhook/test · {"event":"purchase","value":100}</div></div>
+    </button>
+
+    <button class="test-btn" onclick="select(this, 'tc003')">
+      <span class="badge badge-tc">TC-003</span>
+      <div><div class="btn-text">Client ignores non-matching path</div><div class="btn-key">POST /other/path · {"event":"test"}</div></div>
+    </button>
+
+    <button class="test-btn" onclick="select(this, 'tc004a')">
+      <span class="badge badge-tc">TC-004a</span>
+      <div><div class="btn-text">Multiple paths — /webhook/shopify</div><div class="btn-key">POST /webhook/shopify · Shopify payload</div></div>
+    </button>
+
+    <button class="test-btn" onclick="select(this, 'tc004b')">
+      <span class="badge badge-tc">TC-004b</span>
+      <div><div class="btn-text">Multiple paths — /webhook/hubspot</div><div class="btn-key">POST /webhook/hubspot · HubSpot payload</div></div>
+    </button>
+
+    <button class="test-btn" onclick="select(this, 'tc004c')">
+      <span class="badge badge-tc">TC-004c</span>
+      <div><div class="btn-text">Multiple paths — unconfigured path</div><div class="btn-key">POST /webhook/other · passthrough check</div></div>
+    </button>
+
+    <button class="test-btn" onclick="select(this, 'tc005')">
+      <span class="badge badge-tc">TC-005</span>
+      <div><div class="btn-text">Client returns HTTP 200</div><div class="btn-key">POST /webhook/test · minimal body</div></div>
+    </button>
+
+    <div class="section-header">Body Parsing</div>
+
+    <button class="test-btn" onclick="select(this, 'tc006')">
+      <span class="badge badge-tc">TC-006</span>
+      <div><div class="btn-text">Single JSON object parsed</div><div class="btn-key">POST /webhook/test · Shopify order object</div></div>
+    </button>
+
+    <button class="test-btn" onclick="select(this, 'tc007')">
+      <span class="badge badge-tc">TC-007</span>
+      <div><div class="btn-text">Tags can read event data fields</div><div class="btn-key">POST /webhook/test · {"total_price":89.99}</div></div>
+    </button>
+
+    <button class="test-btn" onclick="select(this, 'tc008')">
+      <span class="badge badge-tc">TC-008</span>
+      <div><div class="btn-text">Array as single blob (splitting OFF)</div><div class="btn-key">POST /webhook/test · array of 2 items</div></div>
+    </button>
+
+    <button class="test-btn" onclick="select(this, 'tc009')">
+      <span class="badge badge-tc">TC-009</span>
+      <div><div class="btn-text">Array splitting ON — 3 separate events</div><div class="btn-key">POST /webhook/test · array of 3 items</div></div>
+    </button>
+
+    <button class="test-btn" onclick="select(this, 'tc010')">
+      <span class="badge badge-tc">TC-010</span>
+      <div><div class="btn-text">Malformed / non-JSON body</div><div class="btn-key">POST /webhook/test · "this is not json"</div></div>
+    </button>
+
+    <button class="test-btn" onclick="select(this, 'tc011')">
+      <span class="badge badge-tc">TC-011</span>
+      <div><div class="btn-text">Empty request body</div><div class="btn-key">POST /webhook/test · (no body)</div></div>
+    </button>
+
+    <div class="section-header">Field Mapping</div>
+
+    <button class="test-btn" onclick="select(this, 'tc012')">
+      <span class="badge badge-tc">TC-012</span>
+      <div><div class="btn-text">Single field mapping</div><div class="btn-key">POST /webhook/test · total_price → value</div></div>
+    </button>
+
+    <button class="test-btn" onclick="select(this, 'tc013')">
+      <span class="badge badge-tc">TC-013</span>
+      <div><div class="btn-text">Multiple field mappings simultaneously</div><div class="btn-key">POST /webhook/test · 3 mapped fields</div></div>
+    </button>
+
+    <button class="test-btn" onclick="select(this, 'tc014')">
+      <span class="badge badge-tc">TC-014</span>
+      <div><div class="btn-text">Unmapped fields pass through gracefully</div><div class="btn-key">POST /webhook/test · mixed mapped/unmapped</div></div>
+    </button>
+
+    <div class="section-header">Regression</div>
+
+    <button class="test-btn" onclick="select(this, 'reg001')">
+      <span class="badge badge-reg">REG-001</span>
+      <div><div class="btn-text">GA4 client unaffected</div><div class="btn-key">POST /g/collect · GA4 Measurement Protocol</div></div>
+    </button>
+
+    <button class="test-btn" onclick="select(this, 'reg002')">
+      <span class="badge badge-reg">REG-002</span>
+      <div><div class="btn-text">No-client fallback — unconfigured path</div><div class="btn-key">POST /unconfigured/path</div></div>
+    </button>
+
+    <button class="test-btn" onclick="select(this, 'reg003')">
+      <span class="badge badge-reg">REG-003</span>
+      <div><div class="btn-text">Existing tags unaffected</div><div class="btn-key">POST /webhook/test then non-UC path</div></div>
+    </button>
+
+  </aside>
+
+  <!-- ── MAIN ── -->
+  <div class="main">
+    <div class="request-area">
+      <div class="request-title" id="req-title">TC-002 — Client claims request when path matches configured route</div>
+
+      <div class="request-line">
+        <span class="method-badge" id="req-method">POST</span>
+        <span id="req-url-display"></span>
+      </div>
+
+      <div class="headers-body">
+        <div>
+          <div class="panel-label">Request Headers</div>
+          <pre class="code-box" id="req-headers-display"></pre>
+        </div>
+        <div>
+          <div class="panel-label">Request Body <span style="color:#4b5563;font-size:10px;">(editable)</span></div>
+          <div class="editable-area">
+            <textarea class="body-edit" id="req-body-edit" spellcheck="false"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="send-row">
+        <button id="send-btn" onclick="sendRequest()">Send Request</button>
+        <button id="curl-copy" onclick="toggleCurl()">Show cURL</button>
+        <span id="status-badge"></span>
+        <span id="resp-time"></span>
+      </div>
+
+      <div id="curl-box">
+        <pre id="curl-content"></pre>
+      </div>
+    </div>
+
+    <div class="response-area">
+      <div class="response-header-row">
+        <span class="resp-label">Response Headers</span>
+      </div>
+      <div id="resp-headers-box" class="placeholder">— awaiting request —</div>
+
+      <div class="response-header-row">
+        <span class="resp-label">Response Body</span>
+      </div>
+      <pre id="response-box" class="placeholder">— awaiting request —</pre>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // ── Test case definitions ──────────────────────────────────────────────────
+  const TESTS = {
+    tc002: {
+      title: 'TC-002 — Client claims request when path matches configured route',
+      method: 'POST',
+      path: '/webhook/test',
+      headers: { 'Content-Type': 'application/json' },
+      body: { event: 'purchase', value: 100 }
+    },
+    tc003: {
+      title: 'TC-003 — Client does NOT claim request on non-matching path',
+      method: 'POST',
+      path: '/other/path',
+      headers: { 'Content-Type': 'application/json' },
+      body: { event: 'test' }
+    },
+    tc004a: {
+      title: 'TC-004a — Multiple configured paths · /webhook/shopify',
+      method: 'POST',
+      path: '/webhook/shopify',
+      headers: { 'Content-Type': 'application/json' },
+      body: {
+        order_id: '12345',
+        email: 'bob@example.com',
+        total_price: 89.99,
+        currency: 'USD',
+        created_at: '2026-03-19T14:30:00Z',
+        line_items: [
+          { product: 'Blue T-Shirt', quantity: 2 },
+          { product: 'Socks', quantity: 1 }
+        ]
+      }
+    },
+    tc004b: {
+      title: 'TC-004b — Multiple configured paths · /webhook/hubspot',
+      method: 'POST',
+      path: '/webhook/hubspot',
+      headers: { 'Content-Type': 'application/json' },
+      body: { email: 'alice@example.com', event: 'deal_closed', deal_value: 12000, currency: 'USD' }
+    },
+    tc004c: {
+      title: 'TC-004c — Multiple configured paths · unconfigured /webhook/other (passthrough)',
+      method: 'POST',
+      path: '/webhook/other',
+      headers: { 'Content-Type': 'application/json' },
+      body: { event: 'ignored' }
+    },
+    tc005: {
+      title: 'TC-005 — Client returns HTTP 200 response after claiming a request',
+      method: 'POST',
+      path: '/webhook/test',
+      headers: { 'Content-Type': 'application/json' },
+      body: { ping: true }
+    },
+    tc006: {
+      title: 'TC-006 — Single JSON object body is parsed and event data is populated',
+      method: 'POST',
+      path: '/webhook/test',
+      headers: { 'Content-Type': 'application/json' },
+      body: {
+        order_id: '12345',
+        email: 'bob@example.com',
+        total_price: 89.99,
+        currency: 'USD',
+        created_at: '2026-03-19T14:30:00Z',
+        line_items: [
+          { product: 'Blue T-Shirt', quantity: 2 },
+          { product: 'Socks', quantity: 1 }
+        ]
+      }
+    },
+    tc007: {
+      title: 'TC-007 — Tags can read event data fields set by the client',
+      method: 'POST',
+      path: '/webhook/test',
+      headers: { 'Content-Type': 'application/json' },
+      body: { total_price: 89.99, currency: 'USD', event: 'purchase' }
+    },
+    tc008: {
+      title: 'TC-008 — Array payload treated as single blob (array splitting OFF)',
+      method: 'POST',
+      path: '/webhook/test',
+      headers: { 'Content-Type': 'application/json' },
+      body: [
+        { email: 'bob@example.com', event: 'deal_closed' },
+        { email: 'alice@example.com', event: 'deal_closed' }
+      ]
+    },
+    tc009: {
+      title: 'TC-009 — Array splitting ON — each array item becomes a separate sGTM event',
+      method: 'POST',
+      path: '/webhook/test',
+      headers: { 'Content-Type': 'application/json' },
+      body: [
+        { email: 'bob@example.com', deal_value: 5000 },
+        { email: 'alice@example.com', deal_value: 12000 },
+        { email: 'carol@example.com', deal_value: 3500 }
+      ]
+    },
+    tc010: {
+      title: 'TC-010 — Malformed / non-JSON body handled gracefully',
+      method: 'POST',
+      path: '/webhook/test',
+      headers: { 'Content-Type': 'application/json' },
+      body: 'this is not json',
+      rawBody: true
+    },
+    tc011: {
+      title: 'TC-011 — Empty request body handled gracefully',
+      method: 'POST',
+      path: '/webhook/test',
+      headers: { 'Content-Type': 'application/json', 'Content-Length': '0' },
+      body: null
+    },
+    tc012: {
+      title: 'TC-012 — Custom field mapped to sGTM standard name (total_price → value)',
+      method: 'POST',
+      path: '/webhook/test',
+      headers: { 'Content-Type': 'application/json' },
+      body: { total_price: 89.99, currency: 'USD' }
+    },
+    tc013: {
+      title: 'TC-013 — Multiple field mappings applied simultaneously',
+      method: 'POST',
+      path: '/webhook/test',
+      headers: { 'Content-Type': 'application/json' },
+      body: { total_price: 89.99, email: 'bob@example.com', order_id: '12345' }
+    },
+    tc014: {
+      title: 'TC-014 — Fields without a mapping pass through without error',
+      method: 'POST',
+      path: '/webhook/test',
+      headers: { 'Content-Type': 'application/json' },
+      body: { total_price: 99, currency: 'EUR', order_id: '999' }
+    },
+    reg001: {
+      title: 'REG-001 — Default GA4 client still claims standard GA4 requests',
+      method: 'POST',
+      path: '/g/collect',
+      headers: { 'Content-Type': 'application/json' },
+      body: { v: '2', en: 'page_view', tid: 'G-XXXXXXXX', cid: '555' }
+    },
+    reg002: {
+      title: 'REG-002 — Container returns expected response when no client claims a request',
+      method: 'POST',
+      path: '/unconfigured/path',
+      headers: { 'Content-Type': 'application/json' },
+      body: { test: true }
+    },
+    reg003: {
+      title: 'REG-003 — Existing tags and triggers unaffected by UC Conversions Client presence',
+      method: 'POST',
+      path: '/webhook/test',
+      headers: { 'Content-Type': 'application/json' },
+      body: { event: 'purchase', value: 150, email: 'test@example.com' }
+    }
+  };
+
+  // ── State ──────────────────────────────────────────────────────────────────
+  let currentTest = 'tc002';
+
+  function getBaseUrl() {
+    return document.getElementById('base-url').value.replace(/\/$/, '');
+  }
+
+  function getCurrentBody() {
+    const raw = document.getElementById('req-body-edit').value.trim();
+    return raw;
+  }
+
+  // ── Select a test ──────────────────────────────────────────────────────────
+  function select(btn, key) {
+    document.querySelectorAll('.test-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentTest = key;
+    renderTest(key);
+    // hide curl
+    document.getElementById('curl-box').style.display = 'none';
+    // clear response
+    document.getElementById('resp-headers-box').textContent = '— awaiting request —';
+    document.getElementById('resp-headers-box').className = 'placeholder';
+    document.getElementById('response-box').textContent = '— awaiting request —';
+    document.getElementById('response-box').className = 'placeholder';
+    document.getElementById('status-badge').className = '';
+    document.getElementById('status-badge').style.display = 'none';
+    document.getElementById('resp-time').textContent = '';
+  }
+
+  function renderTest(key) {
+    const t = TESTS[key];
+    document.getElementById('req-title').textContent = t.title;
+
+    const methodEl = document.getElementById('req-method');
+    methodEl.textContent = t.method;
+    methodEl.className = 'method-badge' + (t.method === 'GET' ? ' GET' : '');
+
+    document.getElementById('req-url-display').textContent = getBaseUrl() + t.path;
+
+    const headers = { ...t.headers };
+    document.getElementById('req-headers-display').textContent =
+      Object.entries(headers).map(([k, v]) => `${k}: ${v}`).join('\n');
+
+    let bodyStr = '';
+    if (t.body === null) {
+      bodyStr = '';
+    } else if (t.rawBody) {
+      bodyStr = t.body;
+    } else {
+      bodyStr = JSON.stringify(t.body, null, 2);
+    }
+    document.getElementById('req-body-edit').value = bodyStr;
+  }
+
+  // Update URL display when base URL changes
+  document.getElementById('base-url').addEventListener('input', () => {
+    const t = TESTS[currentTest];
+    document.getElementById('req-url-display').textContent = getBaseUrl() + t.path;
+  });
+
+  // ── Send Request ───────────────────────────────────────────────────────────
+  async function sendRequest() {
+    const t = TESTS[currentTest];
+    const url = getBaseUrl() + t.path;
+    const bodyRaw = getCurrentBody();
+
+    const sendBtn = document.getElementById('send-btn');
+    const statusBadge = document.getElementById('status-badge');
+    const respBox = document.getElementById('response-box');
+    const respHeaders = document.getElementById('resp-headers-box');
+    const respTime = document.getElementById('resp-time');
+
+    sendBtn.disabled = true;
+    sendBtn.textContent = 'Sending…';
+    statusBadge.style.display = 'none';
+    respBox.textContent = 'Waiting for response…';
+    respBox.className = 'placeholder';
+    respHeaders.textContent = '';
+    respTime.textContent = '';
+
+    const fetchOpts = {
+      method: t.method,
+      headers: { ...t.headers },
+      mode: 'cors'
+    };
+
+    if (t.method !== 'GET' && bodyRaw !== '') {
+      fetchOpts.body = bodyRaw;
+    }
+
+    const start = performance.now();
+    try {
+      const res = await fetch(url, fetchOpts);
+      const elapsed = Math.round(performance.now() - start);
+      respTime.textContent = `${elapsed} ms`;
+
+      // Headers
+      const hLines = [];
+      res.headers.forEach((v, k) => hLines.push(`${k}: ${v}`));
+      respHeaders.textContent = hLines.join('\n') || '(no response headers)';
+      respHeaders.className = '';
+
+      // Status badge
+      statusBadge.textContent = `HTTP ${res.status} ${res.statusText}`;
+      statusBadge.className = res.ok ? 'status-ok' : 'status-err';
+
+      // Body
+      const text = await res.text();
+      let formatted = text;
+      try { formatted = JSON.stringify(JSON.parse(text), null, 2); } catch (_) {}
+      respBox.textContent = formatted || '(empty body)';
+      respBox.className = '';
+
+    } catch (err) {
+      const elapsed = Math.round(performance.now() - start);
+      respTime.textContent = `${elapsed} ms`;
+      statusBadge.textContent = 'Network Error';
+      statusBadge.className = 'status-net';
+      respHeaders.textContent = '';
+      respBox.textContent = `Error: ${err.message}\n\nNote: If this is a CORS error, the sGTM container must allow requests from this origin, or use a proxy.`;
+      respBox.className = '';
+    } finally {
+      sendBtn.disabled = false;
+      sendBtn.textContent = 'Send Request';
+    }
+  }
+
+  // ── cURL toggle ────────────────────────────────────────────────────────────
+  function toggleCurl() {
+    const box = document.getElementById('curl-box');
+    if (box.style.display === 'block') {
+      box.style.display = 'none';
+      document.getElementById('curl-copy').textContent = 'Show cURL';
+      return;
+    }
+    const t = TESTS[currentTest];
+    const url = getBaseUrl() + t.path;
+    const bodyRaw = getCurrentBody();
+
+    let cmd = `curl -X ${t.method} '${url}'`;
+    const headers = { ...t.headers };
+    for (const [k, v] of Object.entries(headers)) {
+      cmd += ` \\\n  -H '${k}: ${v}'`;
+    }
+    if (bodyRaw) {
+      const escaped = bodyRaw.replace(/'/g, "'\\''");
+      cmd += ` \\\n  -d '${escaped}'`;
+    }
+    cmd += ` \\\n  -v`;
+
+    document.getElementById('curl-content').textContent = cmd;
+    box.style.display = 'block';
+    document.getElementById('curl-copy').textContent = 'Hide cURL';
+  }
+
+  // ── Init ───────────────────────────────────────────────────────────────────
+  renderTest('tc002');
+</script>
+</body>
+</html>
